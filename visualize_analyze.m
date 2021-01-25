@@ -1,5 +1,6 @@
 %% Script 3. Data analysis and visualization
 clear all;
+addpath('./utils');
 load('./data2/cmlc_20190718_fish4.mat')
 load('./data2/gata1_20190718_fish4.mat')
 
@@ -117,43 +118,43 @@ for t = 1 : size(M,4)
     Y_ds = myocardium_vel.Y(1:ds(1):end, 1:ds(2):end, 1:ds(3):end);
     Z_ds = myocardium_vel.Z(1:ds(1):end, 1:ds(2):end, 1:ds(3):end);
 
-    figure;
-    quiver3(Y_ds,X_ds,Z_ds,V_ds,U_ds,W_ds,4,'Color',[0.1,0.5,0.3],'LineWidth', 0.7);hold on;
-    plot_vec(mean([location1(:,2) location1(:,1) location1(:,3)]), [vector1(2) vector1(1) vector1(3)], 30, 'r', 1);
-    plot_vec(mean([location2(:,2) location2(:,1) location2(:,3)]), [vector2(2) vector2(1) vector2(3)], 30, 'r', 1);
-    plot_vec(mean([location3(:,2) location3(:,1) location3(:,3)]), [vector3(2) vector3(1) vector3(3)], 30, 'r', 1);
-    plot_vec(mean([location4(:,2) location4(:,1) location4(:,3)]), [vector4(2) vector4(1) vector4(3)], 30, 'r', 1);
-    hold off;
-    axis equal
-    view([90 90]);  
-    xlim([0,250]); ylim([0,250]); zlim([0,200]); 
-    set(gca, 'Projection', 'perspective'); 
-    set(gca, 'GridColor', 'k');
-    set(gca, 'lineWidth', 1);
-    set(gca, 'GridAlpha', 0.3);
-    set(gcf,'Color','w');
-    grid on;          
-    title(['Time ' num2str(t*myocardium_config.dt*1000) 'ms']); 
-    saveas(gcf, fullfile(savePath1, ['demons_xy_' num2str(t) '.png']));
-    close(gcf);
-    figure;
-    quiver3(Y_ds,X_ds,Z_ds,V_ds,U_ds,W_ds,4,'Color',[0.1,0.5,0.3],'LineWidth', 0.7);hold on;
-    plot_vec(mean([location1(:,2) location1(:,1) location1(:,3)]), [vector1(2) vector1(1) vector1(3)], 30, 'r', 2);
-    plot_vec(mean([location2(:,2) location2(:,1) location2(:,3)]), [vector2(2) vector2(1) vector2(3)], 30, 'r', 2);
-    plot_vec(mean([location3(:,2) location3(:,1) location3(:,3)]), [vector3(2) vector3(1) vector3(3)], 30, 'r', 2);
-    plot_vec(mean([location4(:,2) location4(:,1) location4(:,3)]), [vector4(2) vector4(1) vector4(3)], 30, 'r', 2);
-    hold off;   
-    axis equal
-    view([-180,0]); 
-    xlim([0,250]); ylim([0,250]); zlim([0,200]); 
-    set(gca, 'Projection', 'perspective'); 
-    set(gca, 'GridColor', 'k');
-    set(gca, 'lineWidth', 1);
-    set(gca, 'GridAlpha', 0.3);
-    set(gcf,'Color','w');
-    grid on;   
-    saveas(gcf, fullfile(savePath2, ['demons_yz_' num2str(t) '.png']));
-    close(gcf);   
+%     figure;
+%     quiver3(Y_ds,X_ds,Z_ds,V_ds,U_ds,W_ds,4,'Color',[0.1,0.5,0.3],'LineWidth', 0.7);hold on;
+%     plot_vec(mean([location1(:,2) location1(:,1) location1(:,3)]), [vector1(2) vector1(1) vector1(3)], 30, 'r', 1);
+%     plot_vec(mean([location2(:,2) location2(:,1) location2(:,3)]), [vector2(2) vector2(1) vector2(3)], 30, 'r', 1);
+%     plot_vec(mean([location3(:,2) location3(:,1) location3(:,3)]), [vector3(2) vector3(1) vector3(3)], 30, 'r', 1);
+%     plot_vec(mean([location4(:,2) location4(:,1) location4(:,3)]), [vector4(2) vector4(1) vector4(3)], 30, 'r', 1);
+%     hold off;
+%     axis equal
+%     view([90 90]);  
+%     xlim([0,250]); ylim([0,250]); zlim([0,200]); 
+%     set(gca, 'Projection', 'perspective'); 
+%     set(gca, 'GridColor', 'k');
+%     set(gca, 'lineWidth', 1);
+%     set(gca, 'GridAlpha', 0.3);
+%     set(gcf,'Color','w');
+%     grid on;          
+%     title(['Time ' num2str(t*myocardium_config.dt*1000) 'ms']); 
+%     saveas(gcf, fullfile(savePath1, ['demons_xy_' num2str(t) '.png']));
+%     close(gcf);
+%     figure;
+%     quiver3(Y_ds,X_ds,Z_ds,V_ds,U_ds,W_ds,4,'Color',[0.1,0.5,0.3],'LineWidth', 0.7);hold on;
+%     plot_vec(mean([location1(:,2) location1(:,1) location1(:,3)]), [vector1(2) vector1(1) vector1(3)], 30, 'r', 2);
+%     plot_vec(mean([location2(:,2) location2(:,1) location2(:,3)]), [vector2(2) vector2(1) vector2(3)], 30, 'r', 2);
+%     plot_vec(mean([location3(:,2) location3(:,1) location3(:,3)]), [vector3(2) vector3(1) vector3(3)], 30, 'r', 2);
+%     plot_vec(mean([location4(:,2) location4(:,1) location4(:,3)]), [vector4(2) vector4(1) vector4(3)], 30, 'r', 2);
+%     hold off;   
+%     axis equal
+%     view([-180,0]); 
+%     xlim([0,250]); ylim([0,250]); zlim([0,200]); 
+%     set(gca, 'Projection', 'perspective'); 
+%     set(gca, 'GridColor', 'k');
+%     set(gca, 'lineWidth', 1);
+%     set(gca, 'GridAlpha', 0.3);
+%     set(gcf,'Color','w');
+%     grid on;   
+%     saveas(gcf, fullfile(savePath2, ['demons_yz_' num2str(t) '.png']));
+%     close(gcf);   
 
     
     disp(['Frame ' num2str(t+floor(myocardium_config.windowSize/2)) ' took ' num2str(toc) ' s']);   

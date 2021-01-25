@@ -1,13 +1,12 @@
 function [Pts_new, Pts_value] = coor_transform(Pts, M, l, lineV1, lineV2, lineV3, l_length)
-%% Output the pts in new coordinate system defined by line l
-% Output pts are in the same order as input pts
+%% Output new coordinates of input points, in reference to the line l 
+% Preferably all inpupts in physical coordinates, rather than image coordinates
 
-% Pts: [row, col, depth] in image coordinates;
+% Pts: coordinates in the order of [row, col, depth]
 % M: magnitude map
-% l: center line in image coordinates; Note: it has to be the same
-% downsampling(ds) rate as Pts, M
+% l: center line in the order of [row, col, depth]
 % lineV1, lineV2, lineV3: coor vectors of l
-% voxelSize: voxelSize of Pts, M
+% l_length: the length of line l
        
     Pts_new = zeros(size(Pts));
     Pts_value = zeros(size(Pts,1),1);
