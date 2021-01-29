@@ -5,16 +5,21 @@ load('./data2/cmlc_20190718_fish4.mat')
 load('./data2/gata1_20190718_fish4.mat')
 
 %% Plot blood cell velocity map
+savePath0 = './temp2/blood_velocity';
+if ~exist(savePath0, 'dir')
+    mkdir(savePath0);
+end
+
 clear vels1d meanVels1D
 blood_vel.cLine_phy = blood_vel.cLine * diag([blood_config.voxelSize(2:-1:1),blood_config.voxelSize(3)]);
 for t=ceil(myocardium_config.windowSize/2):size(blood_vel.U,4)-floor(myocardium_config.windowSize/2)  % in order to sycn with cmlc vec map, which starts from 4 to (end-3)
     tic;
-    
-    vels1d(:,t) = vector_map_project_onto_line1d(blood_vel.U(:,:,:,t),blood_vel.V(:,:,:,t),blood_vel.W(:,:,:,t),blood_vel.cLine_phy,blood_config.voxelSize);
-    if sum(vels1d(:,t)~=0,1) > 0
-        meanVels1D(t) = sum(vels1d(:,t),1) ./ sum(vels1d(:,t)~=0,1);
+    tt = t-floor(myocardium_config.windowSize/2);
+    vels1d(:,tt) = vector_map_project_onto_line1d(blood_vel.U(:,:,:,t),blood_vel.V(:,:,:,t),blood_vel.W(:,:,:,t),blood_vel.cLine_phy,blood_config.voxelSize);
+    if sum(vels1d(:,tt)~=0,1) > 0
+        meanVels1D(tt) = sum(vels1d(:,tt),1) ./ sum(vels1d(:,tt)~=0,1);
     else
-        meanVels1D(t) = 0;
+        meanVels1D(tt) = 0;
     end    
     figure;
     quiver3(blood_vel.Y,blood_vel.X,blood_vel.Z,blood_vel.V(:,:,:,t),blood_vel.U(:,:,:,t),blood_vel.W(:,:,:,t),40,'Color',[0.99,0.3,0.3],...
@@ -30,11 +35,12 @@ for t=ceil(myocardium_config.windowSize/2):size(blood_vel.U,4)-floor(myocardium_
     set(gca, 'GridAlpha', 0.3);
     set(gcf,'Color','w');
     grid on;
-    title(['Time ' num2str((t-3)*blood_config.dt*1000) 'ms']);      
-    print(gcf, '-dpng', '-r150', fullfile('./temp2/blood_velocity', ['RBC_' num2str(t) '.png']));
+    title(['Time ' num2str(tt*blood_config.dt*1000) 'ms']);      
+%     print(gcf, '-dpng', '-r150', fullfile(savePath0, ['RBC_' num2str(tt) '.png']));
+    saveas(gcf, fullfile(savePath0, ['RBC_' num2str(tt) '.png']));
     close(gcf);
 
-    disp(['Frame ' num2str(t) ' took ' num2str(toc) ' s']);
+    disp(['Frame ' num2str(tt) ' took ' num2str(toc) ' s']);
 end
 
 for t = 1:size(vels1d,2)
@@ -118,46 +124,46 @@ for t = 1 : size(M,4)
     Y_ds = myocardium_vel.Y(1:ds(1):end, 1:ds(2):end, 1:ds(3):end);
     Z_ds = myocardium_vel.Z(1:ds(1):end, 1:ds(2):end, 1:ds(3):end);
 
-%     figure;
-%     quiver3(Y_ds,X_ds,Z_ds,V_ds,U_ds,W_ds,4,'Color',[0.1,0.5,0.3],'LineWidth', 0.7);hold on;
-%     plot_vec(mean([location1(:,2) location1(:,1) location1(:,3)]), [vector1(2) vector1(1) vector1(3)], 30, 'r', 1);
-%     plot_vec(mean([location2(:,2) location2(:,1) location2(:,3)]), [vector2(2) vector2(1) vector2(3)], 30, 'r', 1);
-%     plot_vec(mean([location3(:,2) location3(:,1) location3(:,3)]), [vector3(2) vector3(1) vector3(3)], 30, 'r', 1);
-%     plot_vec(mean([location4(:,2) location4(:,1) location4(:,3)]), [vector4(2) vector4(1) vector4(3)], 30, 'r', 1);
-%     hold off;
-%     axis equal
-%     view([90 90]);  
-%     xlim([0,250]); ylim([0,250]); zlim([0,200]); 
-%     set(gca, 'Projection', 'perspective'); 
-%     set(gca, 'GridColor', 'k');
-%     set(gca, 'lineWidth', 1);
-%     set(gca, 'GridAlpha', 0.3);
-%     set(gcf,'Color','w');
-%     grid on;          
-%     title(['Time ' num2str(t*myocardium_config.dt*1000) 'ms']); 
-%     saveas(gcf, fullfile(savePath1, ['demons_xy_' num2str(t) '.png']));
-%     close(gcf);
-%     figure;
-%     quiver3(Y_ds,X_ds,Z_ds,V_ds,U_ds,W_ds,4,'Color',[0.1,0.5,0.3],'LineWidth', 0.7);hold on;
-%     plot_vec(mean([location1(:,2) location1(:,1) location1(:,3)]), [vector1(2) vector1(1) vector1(3)], 30, 'r', 2);
-%     plot_vec(mean([location2(:,2) location2(:,1) location2(:,3)]), [vector2(2) vector2(1) vector2(3)], 30, 'r', 2);
-%     plot_vec(mean([location3(:,2) location3(:,1) location3(:,3)]), [vector3(2) vector3(1) vector3(3)], 30, 'r', 2);
-%     plot_vec(mean([location4(:,2) location4(:,1) location4(:,3)]), [vector4(2) vector4(1) vector4(3)], 30, 'r', 2);
-%     hold off;   
-%     axis equal
-%     view([-180,0]); 
-%     xlim([0,250]); ylim([0,250]); zlim([0,200]); 
-%     set(gca, 'Projection', 'perspective'); 
-%     set(gca, 'GridColor', 'k');
-%     set(gca, 'lineWidth', 1);
-%     set(gca, 'GridAlpha', 0.3);
-%     set(gcf,'Color','w');
-%     grid on;   
-%     saveas(gcf, fullfile(savePath2, ['demons_yz_' num2str(t) '.png']));
-%     close(gcf);   
+    figure;
+    quiver3(Y_ds,X_ds,Z_ds,V_ds,U_ds,W_ds,4,'Color',[0.1,0.5,0.3],'LineWidth', 0.7);hold on;
+    plot_vec(mean([location1(:,2) location1(:,1) location1(:,3)]), [vector1(2) vector1(1) vector1(3)], 30, 'r', 1);
+    plot_vec(mean([location2(:,2) location2(:,1) location2(:,3)]), [vector2(2) vector2(1) vector2(3)], 30, 'r', 1);
+    plot_vec(mean([location3(:,2) location3(:,1) location3(:,3)]), [vector3(2) vector3(1) vector3(3)], 30, 'r', 1);
+    plot_vec(mean([location4(:,2) location4(:,1) location4(:,3)]), [vector4(2) vector4(1) vector4(3)], 30, 'r', 1);
+    hold off;
+    axis equal
+    view([90 90]);  
+    xlim([0,250]); ylim([0,250]); zlim([0,200]); 
+    set(gca, 'Projection', 'perspective'); 
+    set(gca, 'GridColor', 'k');
+    set(gca, 'lineWidth', 1);
+    set(gca, 'GridAlpha', 0.3);
+    set(gcf,'Color','w');
+    grid on;          
+    title(['Time ' num2str(t*myocardium_config.dt*1000) 'ms']); 
+    saveas(gcf, fullfile(savePath1, ['demons_xy_' num2str(t) '.png']));
+    close(gcf);
+    figure;
+    quiver3(Y_ds,X_ds,Z_ds,V_ds,U_ds,W_ds,4,'Color',[0.1,0.5,0.3],'LineWidth', 0.7);hold on;
+    plot_vec(mean([location1(:,2) location1(:,1) location1(:,3)]), [vector1(2) vector1(1) vector1(3)], 30, 'r', 2);
+    plot_vec(mean([location2(:,2) location2(:,1) location2(:,3)]), [vector2(2) vector2(1) vector2(3)], 30, 'r', 2);
+    plot_vec(mean([location3(:,2) location3(:,1) location3(:,3)]), [vector3(2) vector3(1) vector3(3)], 30, 'r', 2);
+    plot_vec(mean([location4(:,2) location4(:,1) location4(:,3)]), [vector4(2) vector4(1) vector4(3)], 30, 'r', 2);
+    hold off;   
+    axis equal
+    view([-180,0]); 
+    xlim([0,250]); ylim([0,250]); zlim([0,200]); 
+    set(gca, 'Projection', 'perspective'); 
+    set(gca, 'GridColor', 'k');
+    set(gca, 'lineWidth', 1);
+    set(gca, 'GridAlpha', 0.3);
+    set(gcf,'Color','w');
+    grid on;   
+    saveas(gcf, fullfile(savePath2, ['demons_yz_' num2str(t) '.png']));
+    close(gcf);   
 
     
-    disp(['Frame ' num2str(t+floor(myocardium_config.windowSize/2)) ' took ' num2str(toc) ' s']);   
+    disp(['Frame ' num2str(t) ' took ' num2str(toc) ' s']);   
 end
 figure;
 plot( (1:size(M,4))*myocardium_config.dt, angle_unwrap(contractionDirection1),...

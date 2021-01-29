@@ -6,9 +6,9 @@ function vels = vector_map_project_onto_line1d(U,V,W,line,voxel_size)
     line_dir = line_dir ./ vecnorm(line_dir,2,2);
     
     [vecs_corr1, vecs_corr2, vecs_corr3] = ind2sub(size(U), find(U~=0 | V~=0 | W~=0));
-    vecs_corr1 = vecs_corr1 * voxel_size(1);
-    vecs_corr2 = vecs_corr2 * voxel_size(2);
-    vecs_corr3 = vecs_corr3 * voxel_size(3);
+    vecs_corr1 = vecs_corr1 * voxel_size(2);  % row
+    vecs_corr2 = vecs_corr2 * voxel_size(1);  % col
+    vecs_corr3 = vecs_corr3 * voxel_size(3);  % depth
     vec1 = U(U~=0 | V~=0 | W~=0);
     vec2 = V(U~=0 | V~=0 | W~=0);
     vec3 = W(U~=0 | V~=0 | W~=0);
